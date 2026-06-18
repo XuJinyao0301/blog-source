@@ -129,6 +129,9 @@ dist
 .cpp-build/
 *.dSYM/
 
+# Hexo deployment cache
+.deploy_git/
+
 # yarn v3
 .pnp.*
 .yarn/*
