@@ -51,7 +51,7 @@ social:
 # Image Settings
 # --------------------------------------
 
-favicon: /img/favicon.png
+favicon: /img/favicon.ico
 
 avatar:
   img: /img/avatar.png
@@ -108,8 +108,8 @@ error_img:
 
 # A simple 404 page
 error_404:
-  enable: false
-  subtitle: 'Page Not Found'
+  enable: true
+  subtitle: 'Page Not Found / 页面不存在'
   background: /img/error-page.png
 
 post_meta:
@@ -460,8 +460,8 @@ math:
 search:
   # Choose: algolia_search / local_search / docsearch
   # leave it empty if you don't need search
-  use:
-  placeholder:
+  use: local_search
+  placeholder: 搜索文章、标签和内容
 
   # Algolia Search
   algolia_search:

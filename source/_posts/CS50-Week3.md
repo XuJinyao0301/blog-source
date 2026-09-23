@@ -7,8 +7,7 @@ tags:
 - CS50
 categories:
 - Programming
-description: 
-- 这篇文章讲解了CS50在Week3里提到的三种排序算法
+description: 总结 CS50 Week 3 中的冒泡排序、选择排序、归并排序、递归思想和时间复杂度。
 ---
 # WEEK 3
 

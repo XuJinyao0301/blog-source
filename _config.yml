@@ -13,7 +13,7 @@ timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://study-xjy.top/
+url: https://www.study-xjy.top/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -92,6 +92,28 @@ pagination_dir: page
 include:
 exclude:
 ignore:
+
+# Local search index
+search:
+  path: search.xml
+  field: all
+  content: true
+  format: html
+
+# RSS / Atom feed
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content: true
+  content_limit: 140
+  content_limit_delim: ' '
+  order_by: -date
+
+# Sitemap
+sitemap:
+  path: sitemap.xml
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/

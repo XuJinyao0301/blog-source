@@ -5,8 +5,7 @@ categories:
 tags:
 - Summary
 date: 2026-04-24 21:53:30
-description:
-- 对于 Mac 的使用体验总结
+description: 总结使用 MacBook 一个月后的真实体验，包括购买原因、日常使用感受和适应过程。
 cover:
 ---
 

@@ -7,11 +7,10 @@ tags:
 - CS106L
 categories:
 - Programming
-description: 
-- 这篇文章主要记录了CS106L在Lecture3里讲到的 Types and Advanced Streams
+description: 整理 CS106L Lecture 3 中的类型系统、输入读取和高级流操作，并通过示例说明常见行为。
 ---
 ## cin 的读取
-![](/images/cs106l_lec3-01.jpg)
+![cin 缓冲区读取示意图](/images/cs106l_lec3-01.jpg)
 
 我们可以看到，当我们输入 Avery Wang 时，
 在 cin 的缓冲区里，只有 Avery 被读走了，后面还剩 Wang\n

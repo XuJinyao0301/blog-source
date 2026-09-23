@@ -6,8 +6,7 @@ tags:
   - Hexo
 categories:
   - Notes
-description: 
-- 记录使用 Hexo 和 Butterfly 搭建个人博客的基本过程与配置。
+description: 记录使用 Hexo、Butterfly、GitHub 和 Vercel 搭建个人博客的基本过程与关键配置。
 permalink: /blog/how-to-build-a-personal-blog-with-hexo/ 
 ---
 ## 1.前言  

@@ -5,43 +5,37 @@ date: 2026-03-25
 
 # Projects / 项目作品
 
-A collection of what I build and explore. 这里记录我做过的项目、阶段性作品，以及一些从想法到可运行产品的实践。
+这里集中展示我真正投入产品判断、持续迭代并完成工程落地的项目。目前重点展示 PocketLedger。
 
 ## PocketLedger / 随心记账本
-- Type: Vibe Coding Project / Open-source Desktop Tool
-- Stack: React, Vite, Electron, local JSON storage
-- Role: Product definition, experience direction, review, and iteration
-- Description: A local-first accounting tool for students. It focuses on recording daily expense, income, transfer, account balance, monthly allowance, and spending structure without requiring login or cloud sync.
-- Statement: This is a vibecoding project. I provided the product goal, usage scenarios, experience judgment, and acceptance direction; Codex helped turn the conversation into a PRD, UI, React + Electron implementation, README, release workflow, and GitHub-ready project.
 
-### Key Features
-- 支持支出、收入、转账三类交易。
-- 支持微信、支付宝、银行卡、现金等账户管理。
-- 支持自定义收入 / 支出分类。
-- 首页展示本月生活费、已花、剩余、收入、支出、结余。
-- 支持账单筛选、搜索、最近交易回看。
-- 支持分类统计、账户支出分布、近 6 个月趋势图。
-- 支持 JSON / CSV 导出，支持 JSON 导入。
-- 支持账户余额校准和校准日志。
-- 默认本地保存，不需要注册登录。
+> **Status:** Active · Open Source  
+> **Stack:** React · Vite · Electron · Local JSON Storage
 
-### Creation Process
-这次创作不是先写代码，而是先把一个模糊想法收敛成可执行的产品：
+PocketLedger 是一个面向大学生的本地优先桌面记账工具。它不要求注册或云同步，重点解决两件事：快速记下一笔收支，以及随时看清这个月的生活费还剩多少。
 
-1. 先明确定位：不是复杂理财平台，而是一个面向大学生日常生活费管理的安静账本。
-2. 再写 PRD：确定核心用户、使用场景、数据模型、首页信息优先级、交易类型、账户系统、分类系统和导入导出能力。
-3. 再做体验取舍：第一版坚持本地优先、单用户、无登录，先把“快速记一笔”和“这个月还剩多少钱”做好。
-4. 再落到工程：使用 React + Vite 做界面，Electron 做桌面壳，本地 JSON 文件保存数据。
-5. 最后做开源化：补 README、LICENSE、CI、Release 配置，让它不仅是一个 demo，而是可以继续维护和发布的开源项目。
+[查看 GitHub 源码](https://github.com/XuJinyao0301/pocket-ledger) · [阅读产品需求文档](https://github.com/XuJinyao0301/pocket-ledger/blob/main/PRD.md)
 
-我把这次项目看成一次 vibe coding 练习：重点不只是“让 AI 写代码”，而是学习如何把需求、判断、体验和验收标准表达清楚，再通过连续反馈把它压成一个真正能运行的工具。
+### 核心能力
 
-## Blog Website
-- Type: Personal Project
-- Stack: Hexo, Butterfly
-- Description: My personal blog for documenting technical learning and growth.
+- 记录支出、收入和转账三类交易。
+- 管理微信、支付宝、银行卡和现金等账户。
+- 自定义收入与支出分类。
+- 汇总本月生活费、已花、剩余、收入、支出和结余。
+- 按条件筛选和搜索账单，快速回看最近交易。
+- 展示分类统计、账户支出分布和近 6 个月趋势。
+- 支持 JSON / CSV 导出和 JSON 导入。
+- 支持账户余额校准并保留校准日志。
+- 数据默认保存在本地，无需注册登录。
 
-## C++ Learning Projects
-- Type: Learning Project
-- Stack: C++
-- Description: Small practice projects and exercises built while learning C++.
+### 产品与工程取舍
+
+第一版没有做账号、云同步和复杂理财功能，而是坚持本地优先、单用户和低操作成本。项目使用 React 与 Vite 构建界面，Electron 提供桌面运行环境，并通过本地 JSON 文件保存数据。
+
+这个项目从一个模糊想法开始，逐步形成了用户场景、数据模型、首页信息层级、交易流程和验收标准，最后补齐 README、许可证、持续集成和桌面应用构建配置。
+
+### 我的角色
+
+这是一个通过持续对话完成的 vibe coding 项目。我负责定义产品目标、使用场景、体验取舍和验收方向，并持续检查结果是否真正可用；Codex 将这些要求转化为 PRD、界面、代码和工程配置。
+
+它对我的价值不只是完成一个工具，也让我练习了如何把需求表达清楚、如何控制第一版范围，以及如何依据实际体验继续迭代。

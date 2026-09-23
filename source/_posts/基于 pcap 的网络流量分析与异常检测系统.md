@@ -6,8 +6,8 @@ tags:
 - Network
 - Python
 date: 2026-03-27 14:23:23
-description:
-- 这篇文章记录了自己做一个小项目的过程
+published: false
+description: 记录使用 pcap 和 Wireshark 完成网络流量分析与异常检测小项目的实践过程。
 cover:
 ---
 ## Day 1
@@ -22,7 +22,7 @@ cover:
 第二天的核心任务是：
 学会在 Wireshark 里看懂最基础的包信息。
 
-![](/images/Wireshark01.png)
+![Wireshark 网络流量分析界面](/images/Wireshark01.png)
 
 以第一行为例：
 ```

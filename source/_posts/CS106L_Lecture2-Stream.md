@@ -7,8 +7,7 @@ tags:
 - CS106L
 categories:
 - Programming
-description: 
-- 这篇文章主要记录了CS106L在Lecture2里讲到的Stream
+description: 记录 CS106L Lecture 2 中流的基本概念，以及输入流、输出流和字符串流的常见用法。
 ---
 ## 什么是Stream
 
