@@ -791,7 +791,7 @@ preloader:
 enter_transitions: false
 
 # Default display mode - light (default) / dark
-display_mode: dark
+display_mode: light
 
 # Configuration for beautifying the content of the article
 beautify:

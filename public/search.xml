@@ -128,11 +128,7 @@
 <p>更准确地说，&gt;&gt; 在读 double 时，会把能构成 double 的部分读完，然后停下来，后面的空格&#x2F;换行还在流里等待后续处理。</p>
 <h3 id="马上-getline-iss-unit-会发生什么"><a href="#马上-getline-iss-unit-会发生什么" class="headerlink" title="马上 getline(iss, unit) 会发生什么"></a>马上 getline(iss, unit) 会发生什么</h3><p>getline 的规则是：<br>从当前位置开始，一直读到换行符 \n 为止。<br>它不会像 &gt;&gt; 一样先主动跳过前导空白。这一点特别重要。<br>所以如果当前位置前面正好残留了一个空格，或者更常见的是残留了一个换行符，那么 getline 可能直接读到“空内容”</p>
 <h3 id="最常见的坑"><a href="#最常见的坑" class="headerlink" title="最常见的坑"></a>最常见的坑</h3><p>虽然说在CS106L中用的是 istirngstream, 但最常见的坑应该是在 cin 上，原因和 iss 的情况一样</p>
-<h3 id="重点1-getline-不会自动跳过前导空白"><a href="#重点1-getline-不会自动跳过前导空白" class="headerlink" title="重点1: getline 不会自动跳过前导空白"></a>重点1: getline 不会自动跳过前导空白</h3><blockquote>
-<blockquote>
-</blockquote>
-</blockquote>
-<p>会先跳过前导空白<br>getline<br>不会跳过，它从当前位置直接开始读<br>所以只要你前面用 &gt;&gt; 留下了换行符，后面紧接一个 getline，就特别容易出问题</p>
+<h3 id="重点1-getline-不会自动跳过前导空白"><a href="#重点1-getline-不会自动跳过前导空白" class="headerlink" title="重点1: getline 不会自动跳过前导空白"></a>重点1: getline 不会自动跳过前导空白</h3><p><code>&gt;&gt;</code><br>会先跳过前导空白<br>getline<br>不会跳过，它从当前位置直接开始读<br>所以只要你前面用 &gt;&gt; 留下了换行符，后面紧接一个 getline，就特别容易出问题</p>
 <h3 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法"></a>修复方法</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">iss &gt;&gt; amount;</span><br><span class="line">iss.ignore();</span><br><span class="line">getline(iss, unit);</span><br></pre></td></tr></table></figure>
 
 <p>这里加上 iss.ignore(), 再 getline 就可以正常读到”Ounces”</p>
@@ -344,6 +340,52 @@
       </tags>
   </entry>
   <entry>
+    <title>盛最多水的容器</title>
+    <url>/2026/04/14/%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<p>由于这道题目还是比较经典的，这里就不贴题目了</p>
+<p>这道题一开始肯定不难想到暴力解法————双for循环。<br>但是这样的话时间复杂度就来到了O(n^2),n稍微大一点就会超时。</p>
+<h2 id="双指针-贪心算法"><a href="#双指针-贪心算法" class="headerlink" title="双指针&amp;贪心算法"></a>双指针&amp;贪心算法</h2><p>这道题我们可以使用双指针的方法，让左右指针分别指向数组的左右两端，从而可以表示容器的左右高度以及宽度。<br>然后根据贪心算法的思想，每次向中间移动最低的的柱子，记录水量，等左右指针相遇则停止。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int maxArea(vector&lt;int&gt;&amp; height) &#123;</span><br><span class="line">        int n = height.size()-1;</span><br><span class="line">        int i = 0, j = n;</span><br><span class="line">        int sum = 0;</span><br><span class="line">        while(i &lt; j)&#123;</span><br><span class="line">            int len = j - i;</span><br><span class="line">            int cur = len * min(height[i], height[j]);</span><br><span class="line">            if(cur &gt; sum)&#123;</span><br><span class="line">                sum = cur;</span><br><span class="line">            &#125;</span><br><span class="line">            if(height[i] &lt; height[j])&#123;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                j--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h2><p>在做这道题目的时候，去理解贪心算法是最关键的。<br>这就像是“木桶效应”，一个木桶能装多少水取决于短的那条边，而不是长的。<br>那么在这道题目里，如果宽度固定，那么容量就只和相对短的一边有关。如果我们去移动长边，那么容量一定不会有增加的可能，移动短边的话，容量就有概率变大。因此每次移动的时候，移动长边绝对是错误的选择，移动短边则是最优解（但并不代表移动短边后得到的容量比之前大）<br>一句话概括：我们 i++ 和 j– 都是为了尝试取到更多的水，如果短的边不动的话，取到的水永远不会比上次多。</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>Algorithms</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>贪心算法</title>
+    <url>/2025/11/14/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="贪心算法介绍"><a href="#贪心算法介绍" class="headerlink" title="贪心算法介绍"></a>贪心算法介绍</h2><p>贪心算法，顾名思义，就是采取贪心的策略去解决或者优化问题。其主要思想是：保证每次操作都是局部的最优解，从而得到全局最优解。（但其实从字面上来看，贪心显然不是一个好词，他仅仅局限于当下，而不是去纵观全局，因此，有时候贪心算法并不能得到全局最优解。）</p>
+<h2 id="贪心算法的思路"><a href="#贪心算法的思路" class="headerlink" title="贪心算法的思路"></a>贪心算法的思路</h2><p>我们首先肯定是要确定我们的贪心目标，比如性价比最高的商品，或者最短的时间，或者最少的钱。然后，我们按照这个目标，一步一步的进行贪心选择，直到我们达到目标。</p>
+<h2 id="贪心算法的应用"><a href="#贪心算法的应用" class="headerlink" title="贪心算法的应用"></a>贪心算法的应用</h2><h3 id="背包问题洛谷P2240"><a href="#背包问题洛谷P2240" class="headerlink" title="背包问题洛谷P2240"></a>背包问题<a href="https://www.luogu.com.cn/problem/P2240">洛谷P2240</a></h3><p>这里还是把题目写出来吧</p>
+<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>阿里巴巴走进了装满宝藏的藏宝洞。藏宝洞里面有 $N(N \le 100)$ 堆金币，第 $i$ 堆金币的总重量和总价值分别是 $m_i,v_i(1\le m_i,v_i \le 100)$。阿里巴巴有一个承重量为 $T(T \le 1000)$ 的背包，但并不一定有办法将全部的金币都装进去。他想装走尽可能多价值的金币。所有金币都可以随意分割，分割完的金币重量价值比（也就是单位价格）不变。请问阿里巴巴最多可以拿走多少价值的金币？</p>
+<h4 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h4><p>第一行两个整数 $N,T$。</p>
+<p>接下来 $N$ 行，每行两个整数 $m_i,v_i$。</p>
+<h4 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h4><p>一个实数表示答案，输出两位小数</p>
+<h4 id="输入输出样例-1"><a href="#输入输出样例-1" class="headerlink" title="输入输出样例 #1"></a>输入输出样例 #1</h4><h5 id="输入-1"><a href="#输入-1" class="headerlink" title="输入 #1"></a>输入 #1</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">4 50</span><br><span class="line">10 60</span><br><span class="line">20 100</span><br><span class="line">30 120</span><br><span class="line">15 45</span><br></pre></td></tr></table></figure>
+
+<h5 id="输出-1"><a href="#输出-1" class="headerlink" title="输出 #1"></a>输出 #1</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">240.00</span><br></pre></td></tr></table></figure>
+
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>注意到题目说了，所有金币都可以随意分割，分割完的金币重量价值比不变。因此，我们可以先对金币按照价值从小到大排序，然后从后往前遍历（为什么不从大到小排序呢？因为sort()函数默认是从小到大排序的，我比较懒），如果当前的金币的重量小于等于背包的容量，我们就把它装进去，并更新背包的容量和价值。如果当前的金币的重量大于背包的容量，我们就停止装了，因为装不下了。</p>
+<p>这里我们使用结构体来打包金币的信息，包括重量和价值以及性价比。<br>然后要写一个排序函数来告诉sort()函数我们要按照结构体中的价值进行排序。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Item</span> &#123;</span><br><span class="line">    <span class="type">int</span> weight;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="type">double</span> ratio;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(Item a, Item b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a.ratio &gt; b.ratio;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>感觉这一步应该是最关键的，也是最麻烦的（对于一个rookie来说）。</p>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Item</span> &#123;</span><br><span class="line">    <span class="type">int</span> weight;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="type">double</span> ratio;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(Item a, Item b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a.ratio &gt; b.ratio;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> N, T;</span><br><span class="line">    cin &gt;&gt; N &gt;&gt; T;</span><br><span class="line">    <span class="function">vector&lt;Item&gt; <span class="title">items</span><span class="params">(N)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">        cin &gt;&gt; items[i].weight &gt;&gt; items[i].value;</span><br><span class="line">        items[i].ratio = (<span class="type">double</span>)items[i].value / items[i].weight;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(items.<span class="built_in">begin</span>(), items.<span class="built_in">end</span>(),cmp);</span><br><span class="line">    <span class="type">double</span> total = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N &amp;&amp; T &gt; <span class="number">0</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (items[i].weight &lt;= T) &#123;</span><br><span class="line">            total += items[i].value;</span><br><span class="line">            T -= items[i].weight;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            total += items[i].ratio * T;</span><br><span class="line">            T = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.2f\n&quot;</span>, total);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>Algorithms</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何用hexo搭建一个个人博客</title>
     <url>//blog/how-to-build-a-personal-blog-with-hexo/</url>
     <content><![CDATA[<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1.前言"></a>1.前言</h2><p>其实关于博客的搭建我花了不少时间，在网上搜集查找了很多文章，期间还向AI请教了一下，前前后后差不多有两天吧，问题主要出现在了一些文件的配置上，所以借此机会，整理一下自己的经验，希望能帮助到大家。  </p>
@@ -426,34 +468,6 @@
       </tags>
   </entry>
   <entry>
-    <title>贪心算法</title>
-    <url>/2025/11/14/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="贪心算法介绍"><a href="#贪心算法介绍" class="headerlink" title="贪心算法介绍"></a>贪心算法介绍</h2><p>贪心算法，顾名思义，就是采取贪心的策略去解决或者优化问题。其主要思想是：保证每次操作都是局部的最优解，从而得到全局最优解。（但其实从字面上来看，贪心显然不是一个好词，他仅仅局限于当下，而不是去纵观全局，因此，有时候贪心算法并不能得到全局最优解。）</p>
-<h2 id="贪心算法的思路"><a href="#贪心算法的思路" class="headerlink" title="贪心算法的思路"></a>贪心算法的思路</h2><p>我们首先肯定是要确定我们的贪心目标，比如性价比最高的商品，或者最短的时间，或者最少的钱。然后，我们按照这个目标，一步一步的进行贪心选择，直到我们达到目标。</p>
-<h2 id="贪心算法的应用"><a href="#贪心算法的应用" class="headerlink" title="贪心算法的应用"></a>贪心算法的应用</h2><h3 id="背包问题洛谷P2240"><a href="#背包问题洛谷P2240" class="headerlink" title="背包问题洛谷P2240"></a>背包问题<a href="https://www.luogu.com.cn/problem/P2240">洛谷P2240</a></h3><p>这里还是把题目写出来吧</p>
-<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>阿里巴巴走进了装满宝藏的藏宝洞。藏宝洞里面有 $N(N \le 100)$ 堆金币，第 $i$ 堆金币的总重量和总价值分别是 $m_i,v_i(1\le m_i,v_i \le 100)$。阿里巴巴有一个承重量为 $T(T \le 1000)$ 的背包，但并不一定有办法将全部的金币都装进去。他想装走尽可能多价值的金币。所有金币都可以随意分割，分割完的金币重量价值比（也就是单位价格）不变。请问阿里巴巴最多可以拿走多少价值的金币？</p>
-<h4 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h4><p>第一行两个整数 $N,T$。</p>
-<p>接下来 $N$ 行，每行两个整数 $m_i,v_i$。</p>
-<h4 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h4><p>一个实数表示答案，输出两位小数</p>
-<h4 id="输入输出样例-1"><a href="#输入输出样例-1" class="headerlink" title="输入输出样例 #1"></a>输入输出样例 #1</h4><h5 id="输入-1"><a href="#输入-1" class="headerlink" title="输入 #1"></a>输入 #1</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">4 50</span><br><span class="line">10 60</span><br><span class="line">20 100</span><br><span class="line">30 120</span><br><span class="line">15 45</span><br></pre></td></tr></table></figure>
-
-<h5 id="输出-1"><a href="#输出-1" class="headerlink" title="输出 #1"></a>输出 #1</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">240.00</span><br></pre></td></tr></table></figure>
-
-<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>注意到题目说了，所有金币都可以随意分割，分割完的金币重量价值比不变。因此，我们可以先对金币按照价值从小到大排序，然后从后往前遍历（为什么不从大到小排序呢？因为sort()函数默认是从小到大排序的，我比较懒），如果当前的金币的重量小于等于背包的容量，我们就把它装进去，并更新背包的容量和价值。如果当前的金币的重量大于背包的容量，我们就停止装了，因为装不下了。</p>
-<p>这里我们使用结构体来打包金币的信息，包括重量和价值以及性价比。<br>然后要写一个排序函数来告诉sort()函数我们要按照结构体中的价值进行排序。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Item</span> &#123;</span><br><span class="line">    <span class="type">int</span> weight;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="type">double</span> ratio;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(Item a, Item b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a.ratio &gt; b.ratio;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>感觉这一步应该是最关键的，也是最麻烦的（对于一个rookie来说）。</p>
-<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Item</span> &#123;</span><br><span class="line">    <span class="type">int</span> weight;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="type">double</span> ratio;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(Item a, Item b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a.ratio &gt; b.ratio;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> N, T;</span><br><span class="line">    cin &gt;&gt; N &gt;&gt; T;</span><br><span class="line">    <span class="function">vector&lt;Item&gt; <span class="title">items</span><span class="params">(N)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">        cin &gt;&gt; items[i].weight &gt;&gt; items[i].value;</span><br><span class="line">        items[i].ratio = (<span class="type">double</span>)items[i].value / items[i].weight;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(items.<span class="built_in">begin</span>(), items.<span class="built_in">end</span>(),cmp);</span><br><span class="line">    <span class="type">double</span> total = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N &amp;&amp; T &gt; <span class="number">0</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (items[i].weight &lt;= T) &#123;</span><br><span class="line">            total += items[i].value;</span><br><span class="line">            T -= items[i].weight;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            total += items[i].ratio * T;</span><br><span class="line">            T = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.2f\n&quot;</span>, total);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>Algorithms</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>过河卒</title>
     <url>/2025/11/14/%E8%BF%87%E6%B2%B3%E5%8D%92/</url>
     <content><![CDATA[<h2 id="题目来源：洛谷P1002"><a href="#题目来源：洛谷P1002" class="headerlink" title="题目来源：洛谷P1002"></a>题目来源：<a href="https://www.luogu.com.cn/problem/P1002">洛谷P1002</a></h2><h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>棋盘上 $A$ 点有一个过河卒，需要走到目标 $B$ 点。卒行走的规则：可以向下、或者向右。同时在棋盘上 $C$ 点有一个对方的马，该马所在的点和所有跳跃一步可达的点称为对方马的控制点。因此称之为“马拦过河卒”。</p>
@@ -502,14 +516,26 @@
       </tags>
   </entry>
   <entry>
-    <title>盛最多水的容器</title>
-    <url>/2026/04/14/%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/</url>
-    <content><![CDATA[<p>由于这道题目还是比较经典的，这里就不贴题目了</p>
-<p>这道题一开始肯定不难想到暴力解法————双for循环。<br>但是这样的话时间复杂度就来到了O(n^2),n稍微大一点就会超时。</p>
-<h2 id="双指针-贪心算法"><a href="#双指针-贪心算法" class="headerlink" title="双指针&amp;贪心算法"></a>双指针&amp;贪心算法</h2><p>这道题我们可以使用双指针的方法，让左右指针分别指向数组的左右两端，从而可以表示容器的左右高度以及宽度。<br>然后根据贪心算法的思想，每次向中间移动最低的的柱子，记录水量，等左右指针相遇则停止。</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int maxArea(vector&lt;int&gt;&amp; height) &#123;</span><br><span class="line">        int n = height.size()-1;</span><br><span class="line">        int i = 0, j = n;</span><br><span class="line">        int sum = 0;</span><br><span class="line">        while(i &lt; j)&#123;</span><br><span class="line">            int len = j - i;</span><br><span class="line">            int cur = len * min(height[i], height[j]);</span><br><span class="line">            if(cur &gt; sum)&#123;</span><br><span class="line">                sum = cur;</span><br><span class="line">            &#125;</span><br><span class="line">            if(height[i] &lt; height[j])&#123;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                j--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h2><p>在做这道题目的时候，去理解贪心算法是最关键的。<br>这就像是“木桶效应”，一个木桶能装多少水取决于短的那条边，而不是长的。<br>那么在这道题目里，如果宽度固定，那么容量就只和相对短的一边有关。如果我们去移动长边，那么容量一定不会有增加的可能，移动短边的话，容量就有概率变大。因此每次移动的时候，移动长边绝对是错误的选择，移动短边则是最优解（但并不代表移动短边后得到的容量比之前大）<br>一句话概括：我们 i++ 和 j– 都是为了尝试取到更多的水，如果短的边不动的话，取到的水永远不会比上次多。</p>
+    <title>递归函数</title>
+    <url>/2025/11/13/%E9%80%92%E5%BD%92/</url>
+    <content><![CDATA[<h2 id="递归函数"><a href="#递归函数" class="headerlink" title="递归函数"></a>递归函数</h2><p>递归函数，简单来说就是函数自己调用自己。可能有点抽象，那我们直接上代码吧。</p>
+<p>现在我们要写一个等差数列的函数，首项是1，公差是3，怎么用递归函数来实现呢？</p>
+<p>首先，我们定义的这个函数很显然有返回值，然后再观察等差数列的性质：后一项与前一项的差等于公差。我们先写一个大概的函数框架：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> result;</span><br><span class="line">    result = <span class="built_in">f</span>(n<span class="number">-1</span>) + <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们先来举个例子，要求第四项是多少，我们就要知道第三项是多少，以此类推……直到我们要知道第一项是多少。好，然后我们要怎么知道第一项是多少呢？如果你还类推那你可能不适合学递归函数。直接给他一个首项啊！</p>
+<p>所以完整的递归函数代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> result;</span><br><span class="line">    <span class="keyword">if</span>(n == <span class="number">1</span>)&#123;</span><br><span class="line">        result = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        result = <span class="built_in">f</span>(n<span class="number">-1</span>) + <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+<h2 id="递归函数的缺陷"><a href="#递归函数的缺陷" class="headerlink" title="递归函数的缺陷"></a>递归函数的缺陷</h2><p>这里我们引入斐波那契数列的问题，我们知道斐波那契数列的特点是：f(n) &#x3D; f(n-1) + f(n-2)，其中f(1) &#x3D; 1，f(2) &#x3D; 1。<br>用脑子思考模拟一下刚才学的递归函数，你会发现，这个函数的缺陷在于它会重复计算相同的子问题，导致效率低下。</p>
+<p>怕你不明白，我们来看看：<br>假设你要求f(5),你是不是要先计算f(4)和f(3)呢？，你求f(4)的时候又要计算f(3)和f(2),OK,这里就可以看到，我们重复计算了f(3)，如果你自己用递归函数在编译器里运行，当n足够大的时候，你会发现到后面要花很长时间才会算出一项。</p>
+<h2 id="递推算法"><a href="#递推算法" class="headerlink" title="递推算法"></a>递推算法</h2><p>那怎么办呢？我们可以用另一种方法，叫做“递推算法”，简单一点，就是我们可以用for循环计算每一项，然后把结果存入数组，这样就不用重复计算了。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a[<span class="number">1000</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    a[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">    a[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">3</span>;i&lt;=n;i++)&#123;</span><br><span class="line">        a[i] = a[i<span class="number">-1</span>] + a[i<span class="number">-2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> a[n];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可能有疑问：</p>
+<p>1.为什么要先定义数组里的元素都为0呢？</p>
+<p>因为如果不定义的话，空数组里的元素是不知道的，是随机的的，也就是垃圾值，有时候会影响结果。</p>
+<p>2.a[0]怎么不用？</p>
+<p>只是为了方便计算，我们把数组的下标从1开始，所以a[0]是没有用的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>递归适合表达能够被拆成相同子问题的结构，但它不一定比循环更高效。如果递归过程中重复计算相同的子问题，运行时间会明显增加。递推算法可以从已知结果出发逐步计算后续结果，避免这里的重复计算。</p>
+<p>怕你不懂，下一次我们找几道题目来练习一下。</p>
 ]]></content>
       <categories>
         <category>Programming</category>
@@ -558,36 +584,6 @@
 <p>对于第一步和最后一步，不就等效于$n-1$个圆盘的移动步数吗？<br>因为$n$始终在最下面，不会影响到其他圆盘的移动。我们在分析$n-1$个圆盘的移动步数时，就可以直接忽略掉$n$。</p>
 <h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">hanoi</span><span class="params">(<span class="type">int</span> n, <span class="type">char</span> source, <span class="type">char</span> temp, <span class="type">char</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;Move disk 1 from &quot;</span> &lt;&lt; source &lt;&lt; <span class="string">&quot; to &quot;</span> &lt;&lt; target &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//将除了n以外的圆盘从source移动到temp</span></span><br><span class="line">    <span class="built_in">hanoi</span>(n<span class="number">-1</span>, source, target, temp);</span><br><span class="line">    <span class="comment">//将n从source移动到target</span></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Move disk &quot;</span> &lt;&lt; n &lt;&lt; <span class="string">&quot; from &quot;</span> &lt;&lt; source &lt;&lt; <span class="string">&quot; to &quot;</span> &lt;&lt; target &lt;&lt; endl;</span><br><span class="line">    <span class="comment">//将剩余的圆盘从temp移动到target</span></span><br><span class="line">    <span class="built_in">hanoi</span>(n<span class="number">-1</span>, temp, source, target);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="comment">//假设柱子用A、B、C表示</span></span><br><span class="line">    <span class="built_in">hanoi</span>(n, <span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h2><p>如果你每次学完汉诺塔问题，过一段时间后就又写不出来了。这在一定程度上不是你的问题，汉诺塔问题有它的特殊性。<br>特殊点在于“不可人脑模拟”<br>一般人的大脑无法模拟汉诺塔问题中的的全部移动过程（格式大于等于4就不行）。<br>这会导致人的心里非常没底。<br>由于无法模拟，<br>所以只能把希望全部放在子问题的定义和描述上。只能通过子问题的定义和描述来解决问题。</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>Algorithms</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>递归函数</title>
-    <url>/2025/11/13/%E9%80%92%E5%BD%92/</url>
-    <content><![CDATA[<h2 id="递归函数"><a href="#递归函数" class="headerlink" title="递归函数"></a>递归函数</h2><p>递归函数，简单来说就是函数自己调用自己。可能有点抽象，那我们直接上代码吧。</p>
-<p>现在我们要写一个等差数列的函数，首项是1，公差是3，怎么用递归函数来实现呢？</p>
-<p>首先，我们定义的这个函数很显然有返回值，然后再观察等差数列的性质：后一项与前一项的差等于公差。我们先写一个大概的函数框架：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> result;</span><br><span class="line">    result = <span class="built_in">f</span>(n<span class="number">-1</span>) + <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们先来举个例子，要求第四项是多少，我们就要知道第三项是多少，以此类推……直到我们要知道第一项是多少。好，然后我们要怎么知道第一项是多少呢？如果你还类推那你可能不适合学递归函数。直接给他一个首项啊！</p>
-<p>所以完整的递归函数代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> result;</span><br><span class="line">    <span class="keyword">if</span>(n == <span class="number">1</span>)&#123;</span><br><span class="line">        result = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        result = <span class="built_in">f</span>(n<span class="number">-1</span>) + <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
-<h2 id="递归函数的缺陷"><a href="#递归函数的缺陷" class="headerlink" title="递归函数的缺陷"></a>递归函数的缺陷</h2><p>这里我们引入斐波那契数列的问题，我们知道斐波那契数列的特点是：f(n) &#x3D; f(n-1) + f(n-2)，其中f(1) &#x3D; 1，f(2) &#x3D; 1。<br>用脑子思考模拟一下刚才学的递归函数，你会发现，这个函数的缺陷在于它会重复计算相同的子问题，导致效率低下。</p>
-<p>怕你不明白，我们来看看：<br>假设你要求f(5),你是不是要先计算f(4)和f(3)呢？，你求f(4)的时候又要计算f(3)和f(2),OK,这里就可以看到，我们重复计算了f(3)，如果你自己用递归函数在编译器里运行，当n足够大的时候，你会发现到后面要花很长时间才会算出一项。</p>
-<h2 id="递推算法"><a href="#递推算法" class="headerlink" title="递推算法"></a>递推算法</h2><p>那怎么办呢？我们可以用另一种方法，叫做“递推算法”，简单一点，就是我们可以用for循环计算每一项，然后把结果存入数组，这样就不用重复计算了。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> a[<span class="number">1000</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    a[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">    a[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">3</span>;i&lt;=n;i++)&#123;</span><br><span class="line">        a[i] = a[i<span class="number">-1</span>] + a[i<span class="number">-2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> a[n];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>你可能有疑问：</p>
-<p>1.为什么要先定义数组里的元素都为0呢？</p>
-<p>因为如果不定义的话，空数组里的元素是不知道的，是随机的的，也就是垃圾值，有时候会影响结果。</p>
-<p>2.a[0]怎么不用？</p>
-<p>只是为了方便计算，我们把数组的下标从1开始，所以a[0]是没有用的。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>递归适合表达能够被拆成相同子问题的结构，但它不一定比循环更高效。如果递归过程中重复计算相同的子问题，运行时间会明显增加。递推算法可以从已知结果出发逐步计算后续结果，避免这里的重复计算。</p>
-<p>怕你不懂，下一次我们找几道题目来练习一下。</p>
 ]]></content>
       <categories>
         <category>Programming</category>
@@ -844,7 +840,13 @@ a:hover {
 #page h2,
 #post h2,
 #page h3,
-#post h3 {
+#post h3,
+#page h4,
+#post h4,
+#page h5,
+#post h5,
+#page h6,
+#post h6 {
   color: var(--mimo-ink) !important;
   font-family: "Avenir Next", "Helvetica Neue", "PingFang SC", sans-serif;
   font-weight: 600;
@@ -880,6 +882,27 @@ a:hover {
   text-decoration: none;
 }
 
+#post > #post-info #post-meta,
+#post > #post-info #post-meta a {
+  color: rgba(17, 17, 17, 0.68) !important;
+}
+
+#article-container blockquote {
+  border-left-color: var(--mimo-line-strong);
+  background: var(--mimo-paper-soft);
+  color: rgba(17, 17, 17, 0.78);
+}
+
+#article-container blockquote p,
+#article-container blockquote li {
+  color: rgba(17, 17, 17, 0.78);
+}
+
+#article-container :not(pre) > code {
+  background: rgba(17, 17, 17, 0.08);
+  color: #7a2f2a;
+}
+
 #article-container figure.highlight,
 #article-container pre,
 #article-container .highlight {
@@ -897,6 +920,24 @@ a:hover {
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
+}
+
+#post .tag_share .post-meta__tags,
+#post .post-copyright .post-copyright-meta {
+  color: var(--mimo-ink) !important;
+}
+
+#post .tag_share .post-meta__tags {
+  border-color: var(--mimo-line-strong) !important;
+}
+
+#post .tag_share .post-meta__tags:hover {
+  background: var(--mimo-ink) !important;
+  color: var(--mimo-paper) !important;
+}
+
+#post .post-copyright::before {
+  color: var(--mimo-ink) !important;
 }
 
 #footer {
@@ -1398,6 +1439,57 @@ a:hover {
 ]]></content>
   </entry>
   <entry>
+    <title>link</title>
+    <url>/link/index.html</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>Projects</title>
+    <url>/projects/index.html</url>
+    <content><![CDATA[<h1 id="Projects-项目作品"><a href="#Projects-项目作品" class="headerlink" title="Projects &#x2F; 项目作品"></a>Projects &#x2F; 项目作品</h1><p>这里集中展示我真正投入产品判断、持续迭代并完成工程落地的项目。目前重点展示 PocketLedger。</p>
+<h2 id="PocketLedger-随心记账本"><a href="#PocketLedger-随心记账本" class="headerlink" title="PocketLedger &#x2F; 随心记账本"></a>PocketLedger &#x2F; 随心记账本</h2><blockquote>
+<p><strong>Status:</strong> Active · Open Source<br><strong>Stack:</strong> React · Vite · Electron · Local JSON Storage</p>
+</blockquote>
+<p>PocketLedger 是一个面向大学生的本地优先桌面记账工具。它不要求注册或云同步，重点解决两件事：快速记下一笔收支，以及随时看清这个月的生活费还剩多少。</p>
+<p><a href="https://github.com/XuJinyao0301/pocket-ledger">查看 GitHub 源码</a> · <a href="https://github.com/XuJinyao0301/pocket-ledger/blob/main/PRD.md">阅读产品需求文档</a></p>
+<h3 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h3><ul>
+<li>记录支出、收入和转账三类交易。</li>
+<li>管理微信、支付宝、银行卡和现金等账户。</li>
+<li>自定义收入与支出分类。</li>
+<li>汇总本月生活费、已花、剩余、收入、支出和结余。</li>
+<li>按条件筛选和搜索账单，快速回看最近交易。</li>
+<li>展示分类统计、账户支出分布和近 6 个月趋势。</li>
+<li>支持 JSON &#x2F; CSV 导出和 JSON 导入。</li>
+<li>支持账户余额校准并保留校准日志。</li>
+<li>数据默认保存在本地，无需注册登录。</li>
+</ul>
+<h3 id="产品与工程取舍"><a href="#产品与工程取舍" class="headerlink" title="产品与工程取舍"></a>产品与工程取舍</h3><p>第一版没有做账号、云同步和复杂理财功能，而是坚持本地优先、单用户和低操作成本。项目使用 React 与 Vite 构建界面，Electron 提供桌面运行环境，并通过本地 JSON 文件保存数据。</p>
+<p>这个项目从一个模糊想法开始，逐步形成了用户场景、数据模型、首页信息层级、交易流程和验收标准，最后补齐 README、许可证、持续集成和桌面应用构建配置。</p>
+<h3 id="我的角色"><a href="#我的角色" class="headerlink" title="我的角色"></a>我的角色</h3><p>这是一个通过持续对话完成的 vibe coding 项目。我负责定义产品目标、使用场景、体验取舍和验收方向，并持续检查结果是否真正可用；Codex 将这些要求转化为 PRD、界面、代码和工程配置。</p>
+<p>它对我的价值不只是完成一个工具，也让我练习了如何把需求表达清楚、如何控制第一版范围，以及如何依据实际体验继续迭代。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Now</title>
+    <url>/now/index.html</url>
+    <content><![CDATA[<h1 id="Now"><a href="#Now" class="headerlink" title="Now"></a>Now</h1><p>Currently I am:</p>
+<ul>
+<li>learning C++ more systematically</li>
+<li>building stronger CS foundations</li>
+<li>exploring machine learning and future research directions</li>
+<li>improving this blog and writing more consistently</li>
+</ul>
+<hr>
+<p>我最近在：</p>
+<ul>
+<li>系统学习 C++</li>
+<li>打牢计算机基础</li>
+<li>思考未来更适合自己的技术方向</li>
+<li>重构博客并坚持写作</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>About</title>
     <url>/about/index.html</url>
     <content><![CDATA[<h1 id="About"><a href="#About" class="headerlink" title="About"></a>About</h1><p>I am an undergraduate student majoring in Network Engineering.</p>
@@ -1479,64 +1571,13 @@ a:hover {
 ]]></content>
   </entry>
   <entry>
-    <title>link</title>
-    <url>/link/index.html</url>
+    <title>Tags</title>
+    <url>/tags/index.html</url>
     <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>Now</title>
-    <url>/now/index.html</url>
-    <content><![CDATA[<h1 id="Now"><a href="#Now" class="headerlink" title="Now"></a>Now</h1><p>Currently I am:</p>
-<ul>
-<li>learning C++ more systematically</li>
-<li>building stronger CS foundations</li>
-<li>exploring machine learning and future research directions</li>
-<li>improving this blog and writing more consistently</li>
-</ul>
-<hr>
-<p>我最近在：</p>
-<ul>
-<li>系统学习 C++</li>
-<li>打牢计算机基础</li>
-<li>思考未来更适合自己的技术方向</li>
-<li>重构博客并坚持写作</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>Projects</title>
-    <url>/projects/index.html</url>
-    <content><![CDATA[<h1 id="Projects-项目作品"><a href="#Projects-项目作品" class="headerlink" title="Projects &#x2F; 项目作品"></a>Projects &#x2F; 项目作品</h1><p>这里集中展示我真正投入产品判断、持续迭代并完成工程落地的项目。目前重点展示 PocketLedger。</p>
-<h2 id="PocketLedger-随心记账本"><a href="#PocketLedger-随心记账本" class="headerlink" title="PocketLedger &#x2F; 随心记账本"></a>PocketLedger &#x2F; 随心记账本</h2><blockquote>
-<p><strong>Status:</strong> Active · Open Source<br><strong>Stack:</strong> React · Vite · Electron · Local JSON Storage</p>
-</blockquote>
-<p>PocketLedger 是一个面向大学生的本地优先桌面记账工具。它不要求注册或云同步，重点解决两件事：快速记下一笔收支，以及随时看清这个月的生活费还剩多少。</p>
-<p><a href="https://github.com/XuJinyao0301/pocket-ledger">查看 GitHub 源码</a> · <a href="https://github.com/XuJinyao0301/pocket-ledger/blob/main/PRD.md">阅读产品需求文档</a></p>
-<h3 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h3><ul>
-<li>记录支出、收入和转账三类交易。</li>
-<li>管理微信、支付宝、银行卡和现金等账户。</li>
-<li>自定义收入与支出分类。</li>
-<li>汇总本月生活费、已花、剩余、收入、支出和结余。</li>
-<li>按条件筛选和搜索账单，快速回看最近交易。</li>
-<li>展示分类统计、账户支出分布和近 6 个月趋势。</li>
-<li>支持 JSON &#x2F; CSV 导出和 JSON 导入。</li>
-<li>支持账户余额校准并保留校准日志。</li>
-<li>数据默认保存在本地，无需注册登录。</li>
-</ul>
-<h3 id="产品与工程取舍"><a href="#产品与工程取舍" class="headerlink" title="产品与工程取舍"></a>产品与工程取舍</h3><p>第一版没有做账号、云同步和复杂理财功能，而是坚持本地优先、单用户和低操作成本。项目使用 React 与 Vite 构建界面，Electron 提供桌面运行环境，并通过本地 JSON 文件保存数据。</p>
-<p>这个项目从一个模糊想法开始，逐步形成了用户场景、数据模型、首页信息层级、交易流程和验收标准，最后补齐 README、许可证、持续集成和桌面应用构建配置。</p>
-<h3 id="我的角色"><a href="#我的角色" class="headerlink" title="我的角色"></a>我的角色</h3><p>这是一个通过持续对话完成的 vibe coding 项目。我负责定义产品目标、使用场景、体验取舍和验收方向，并持续检查结果是否真正可用；Codex 将这些要求转化为 PRD、界面、代码和工程配置。</p>
-<p>它对我的价值不只是完成一个工具，也让我练习了如何把需求表达清楚、如何控制第一版范围，以及如何依据实际体验继续迭代。</p>
-]]></content>
   </entry>
   <entry>
     <title>Categories</title>
     <url>/categories/index.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>Tags</title>
-    <url>/tags/index.html</url>
     <content><![CDATA[]]></content>
   </entry>
 </search>
