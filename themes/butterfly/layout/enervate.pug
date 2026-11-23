@@ -1,0 +1,75 @@
+- const entry = typeof home === 'undefined' ? enervate_home() : home
+- const welcome = 'Welcome to my blog'
+- const nav = [{ label: '首页', href: '#top' }, { label: '文章', href: '#writing' }, { label: '项目', href: entry.links.projects }, { label: '关于', href: entry.links.about }]
+- const categoryLabels = { Life: '生活', Notes: '笔记', Programming: '编程' }
+doctype html
+html(lang='zh-CN')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    meta(name='description' content='Enervate. 记录生活、阅读与科研。')
+    meta(name='theme-color' content='#faf9f7')
+    if entry.canonical
+      link(rel='canonical' href=entry.canonical)
+    title Enervate.
+    link(rel='icon' href=entry.asset + 'icon.png' type='image/png')
+    link(rel='preload' href=entry.asset + 'instrument-serif.woff2' as='font' type='font/woff2' crossorigin)
+    link(rel='stylesheet' href=entry.asset + 'widgets.css')
+    link(rel='stylesheet' href=entry.asset + 'home.css')
+  body
+    a.skip(href='#writing') 跳到文章
+    header.masthead
+      a.wordmark(href='#top' aria-label='Enervate. 首页') Enervate.
+      .nav-shell
+        nav.nav-fallback(aria-label='主导航')
+          each item, index in nav
+            a(href=item.href aria-current=index === 0 ? 'location' : undefined)= item.label
+        div(data-nav-mount)
+    main
+      section.hero#top(aria-labelledby='home-title')
+        h1.visually-hidden#home-title(lang='en')= welcome
+        .cloth-stage(data-cloth data-title=welcome)
+          .cloth-still(aria-hidden='true')
+            picture
+              source(media='(max-width: 800px) and (orientation: portrait)' srcset=entry.asset + 'cloth-mobile.webp')
+              img(src=entry.asset + 'cloth-desktop.webp' alt='' fetchpriority='high')
+          canvas(aria-hidden='true')
+          .cloth-input(aria-hidden='true')
+        .stage-controls
+          .cloth-caption
+            span.caption-dot(aria-hidden='true')
+            span(data-cloth-caption) 静态布面
+          a.index-link(href='#writing') 浏览文章
+          button.reset(type='button' data-cloth-reset disabled) 复位
+      section.writing#writing(aria-labelledby='writing-title')
+        .section-head
+          h2#writing-title 文章
+          .writing-actions
+            button.wall-toggle(type='button' data-wall-toggle aria-controls='article-wall' hidden) 暂停漂移
+            a.quiet-link(href=entry.links.archives) 文章归档
+        if entry.posts.length
+          .article-wall#article-wall(data-article-wall)
+            div(data-wall-mount aria-hidden='true')
+            ul.posts
+              each post, index in entry.posts
+                - const category = post.categories.map(name => categoryLabels[name] || name).join(' · ')
+                li
+                  a.post-card(href=post.href class=post.image ? 'post-card--cover' : '' data-tone=index % 5)
+                    if post.image
+                      img.post-cover(src=post.image alt='' loading='lazy' decoding='async')
+                    .post-meta
+                      if category
+                        span.post-category= category
+                      time.post-date(datetime=post.date)= post.date.replace(/-/g, '.')
+                    span.post-title= post.title
+        else
+          p.empty 暂无文章
+    footer.colophon
+      a.wordmark(href='#top') Enervate.
+      nav(aria-label='更多入口')
+        a(href=entry.links.categories) 分类
+        a(href=entry.links.tags) 标签
+        a(href=entry.links.now) 近况
+        a(href=entry.links.feed) RSS
+    script(type='module' src=entry.asset + 'cloth.js')
+    script(type='module' src=entry.asset + 'widgets.js')
