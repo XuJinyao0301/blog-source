@@ -24,7 +24,6 @@ menu:
   研究方向: '/#research || fas fa-laptop-code'
   关于: '/#about || fas fa-user'
   Archives: /archives/ || fas fa-archive
-  Now: /now/ || fas fa-clock
 
 code_blocks:
   # Code block theme: darker / pale night / light / ocean / false

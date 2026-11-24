@@ -14,6 +14,7 @@ if (originalIndex) {
 
 hexo.extend.helper.register('enervate_home', function () {
   const link = path => this.url_for(path);
+  const terms = collection => collection.map(term => ({ name: term.name, href: link(term.path) }));
   const sections = [
     { id: 'research', path: 'projects/index.html', title: '研究方向' },
     { id: 'about', path: 'about/index.html', title: '关于' }
@@ -27,17 +28,13 @@ hexo.extend.helper.register('enervate_home', function () {
     root: link('/'),
     canonical: this.url,
     asset: link('/enervate/'),
-    links: {
-      archives: link('/archives/'),
-      categories: link('/categories/'),
-      tags: link('/tags/'),
-      now: link('/now/')
-    },
+    links: { archives: link('/archives/') },
     posts: this.site.posts.sort('date', -1).limit(18).map(post => ({
       title: post.title || '无标题',
       date: this.date(post.date, 'YYYY-MM-DD'),
       href: link(post.link || post.path),
-      categories: post.categories.map(category => category.name),
+      categories: terms(post.categories),
+      tags: terms(post.tags),
       image: typeof post.cover === 'string' && post.cover.trim() && post.cover.trim() !== 'false'
         ? link(post.cover.trim())
         : null
