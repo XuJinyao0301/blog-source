@@ -19,7 +19,6 @@ html(lang='zh-CN')
   body
     a.skip(href='#writing') 跳到文章
     header.masthead
-      a.wordmark(href='#top' aria-label='Enervate. 首页') Enervate.
       .nav-shell
         nav.nav-fallback(aria-label='主导航')
           each item, index in nav
@@ -27,6 +26,7 @@ html(lang='zh-CN')
         div(data-nav-mount)
     main
       section.hero#top(aria-labelledby='home-title')
+        a.wordmark.hero-wordmark(href='#top' aria-label='Enervate. 首页') Enervate.
         h1.visually-hidden#home-title(lang='en')= welcome
         .cloth-stage(data-cloth data-title=welcome)
           .cloth-still(aria-hidden='true')
@@ -35,12 +35,7 @@ html(lang='zh-CN')
               img(src=entry.asset + 'cloth-desktop.webp' alt='' fetchpriority='high')
           canvas(aria-hidden='true')
           .cloth-input(aria-hidden='true')
-        .stage-controls
-          .cloth-caption
-            span.caption-dot(aria-hidden='true')
-            span(data-cloth-caption) 静态布面
-          a.index-link(href='#writing') 浏览文章
-          button.reset(type='button' data-cloth-reset disabled) 复位
+        a.index-link(href='#writing') 浏览文章
       section.writing#writing(aria-labelledby='writing-title')
         .section-head
           h2#writing-title 文章
