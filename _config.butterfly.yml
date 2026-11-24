@@ -18,12 +18,12 @@ nav:
   fixed: true
 
 menu:
-  Home: / || fas fa-home
-  Categories: /categories/ || fas fa-folder-open
-  Tags: /tags/ || fas fa-tags
+  首页: / || fas fa-home
+  分类: /categories/ || fas fa-folder-open
+  标签: /tags/ || fas fa-tags
   研究方向: '/#research || fas fa-laptop-code'
   关于: '/#about || fas fa-user'
-  Archives: /archives/ || fas fa-archive
+  文章归档: /archives/ || fas fa-archive
 
 code_blocks:
   # Code block theme: darker / pale night / light / ocean / false

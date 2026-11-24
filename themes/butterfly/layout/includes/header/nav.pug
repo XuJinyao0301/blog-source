@@ -15,12 +15,21 @@ nav#nav
   #menus
     if theme.search.use
       #search-button
-        span.site-page.social-icon.search
-          i.fas.fa-search.fa-fw
-          span= ' ' + _p('search.title')
+        if readingPage
+          button.site-page.social-icon.search(type='button' aria-label='搜索')
+            span.reading-search-icon(aria-hidden='true')
+            span.reading-search-label= _p('search.title')
+        else
+          span.site-page.social-icon.search
+            i.fas.fa-search.fa-fw
+            span= ' ' + _p('search.title')
     if theme.menu
       != partial('includes/header/menu_item', {}, {cache: true})
 
-      #toggle-menu
-        span.site-page
-          i.fas.fa-bars.fa-fw
+      if readingPage
+        button#toggle-menu(type='button' aria-label='打开菜单' aria-controls='sidebar-menus')
+          span.reading-menu-icon(aria-hidden='true')
+      else
+        #toggle-menu
+          span.site-page
+            i.fas.fa-bars.fa-fw

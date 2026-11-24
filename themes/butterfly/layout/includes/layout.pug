@@ -1,4 +1,5 @@
 - var globalPageType = getPageType(page, is_home)
+- const readingPage = globalPageType === 'post' || globalPageType === 'archive'
 - var htmlClassHideAside = theme.aside.enable && theme.aside.hide ? 'hide-aside' : ''
 - page.aside = globalPageType === 'archive' ? theme.aside.display.archive: globalPageType === 'category' ? theme.aside.display.category : globalPageType === 'tag' ? theme.aside.display.tag : page.aside
 - var hideAside = !theme.aside.enable || page.aside === false ? 'hide-aside' : ''
@@ -6,9 +7,11 @@
 - pageType = page.type ? pageType + ' type-' + page.type : pageType
 
 doctype html
-html(lang=config.language data-theme=theme.display_mode class=htmlClassHideAside)
+html(lang=config.language data-theme=theme.display_mode class=[htmlClassHideAside, readingPage ? 'enervate-reading' : ''])
   head
     include ./head.pug
+    if readingPage
+      link(rel='stylesheet' href=url_for('/enervate/reading.css'))
   body(class=globalPageType === 'home' ? 'mimo-mode' : '')
     !=partial('includes/loading/index', {}, {cache: true})
 

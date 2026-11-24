@@ -13,10 +13,11 @@
             i.far.fa-calendar-alt.fa-fw.post-meta-icon
             span.post-meta-label= _p('post.created')
             time.post-meta-date-created(datetime=date_xml(page.date) title=_p('post.created') + ' ' + full_date(page.date))= date(page.date, config.date_format)
-            span.post-meta-separator |
-            i.fas.fa-history.fa-fw.post-meta-icon
-            span.post-meta-label= _p('post.updated')
-            time.post-meta-date-updated(datetime=date_xml(page.updated) title=_p('post.updated') + ' ' + full_date(page.updated))= date(page.updated, config.date_format)
+            if date(page.updated, config.date_format) !== date(page.date, config.date_format)
+              span.post-meta-separator |
+              i.fas.fa-history.fa-fw.post-meta-icon
+              span.post-meta-label= _p('post.updated')
+              time.post-meta-date-updated(datetime=date_xml(page.updated) title=_p('post.updated') + ' ' + full_date(page.updated))= date(page.updated, config.date_format)
           else
             - let data_type_update = theme.post_meta.post.date_type === 'updated'
             - let date_type = data_type_update ? 'updated' : 'date'
@@ -31,7 +32,7 @@
             span.post-meta-separator |
           each item, index in page.categories.data
             i.fas.fa-inbox.fa-fw.post-meta-icon
-            a(href=url_for(item.path)).post-meta-categories #[=item.name]
+            a(href=url_for(item.path)).post-meta-categories= ({ Life: '生活', Notes: '笔记', Programming: '编程' })[item.name] || item.name
             if index < page.categories.data.length - 1
               i.fas.fa-angle-right.post-meta-separator
 

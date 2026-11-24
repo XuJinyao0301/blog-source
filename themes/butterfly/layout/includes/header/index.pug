@@ -5,7 +5,7 @@
   let headerClassName = 'not-top-img'
   var bg_img = ''
 
-if !theme.disable_top_img && page.top_img !== false
+if globalPageType !== 'archive' && !theme.disable_top_img && page.top_img !== false
   case globalPageType
     when 'post'
       - top_img = page.top_img || page.cover || theme.default_top_img
@@ -48,5 +48,5 @@ header#page-header(class=`${headerClassName + isFixedClass}` style=bg_img)
         h1#site-title=page.title || page.tag || page.category
   else
     //- improve seo
-    if globalPageType !== 'post'
+    if globalPageType !== 'post' && globalPageType !== 'archive'
       h1.title-seo=page.title || page.tag || page.category || config.title

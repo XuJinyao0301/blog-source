@@ -1,7 +1,28 @@
 extends includes/layout.pug
 
 block content
-  include ./includes/mixins/indexPostUI.pug
-  #archive
-    .article-sort-title= `${_p('page.articles')} - ${getArchiveLength()}`
-    +indexPostUI()
+  -
+    const years = new Map();
+    page.posts.forEach(article => {
+      const year = date(article.date, 'YYYY');
+      if (!years.has(year)) years.set(year, []);
+      years.get(year).push(article);
+    });
+  #archive.enervate-archive
+    header.archive-heading
+      if page.year
+        a.archive-back(href=url_for('/archives/')) 全部文章
+      h1= page.title || '文章归档'
+      p.archive-total= getArchiveLength() + ' 篇文章'
+    each group in [...years]
+      - const [year, articles] = group
+      section.archive-year
+        if !page.year
+          h2= year
+        ul.archive-list
+          each article in articles
+            li
+              a.archive-row(href=url_for(article.path))
+                time(datetime=date_xml(article.date))= date(article.date, 'MM.DD')
+                span= article.title || _p('no_title')
+    include includes/pagination.pug
