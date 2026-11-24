@@ -1,6 +1,6 @@
 - const entry = typeof home === 'undefined' ? enervate_home() : home
 - const welcome = 'Welcome to my blog'
-- const nav = [{ label: '首页', href: '#top' }, { label: '文章', href: '#writing' }, { label: '研究方向', href: entry.links.projects }, { label: '关于', href: entry.links.about }]
+- const nav = [{ label: '首页', href: '#top' }, { label: '文章', href: '#writing' }, ...entry.sections.map(section => ({ label: section.title, href: '#' + section.id }))]
 - const categoryLabels = { Life: '生活', Notes: '笔记', Programming: '编程' }
 doctype html
 html(lang='zh-CN')
@@ -59,6 +59,12 @@ html(lang='zh-CN')
                     span.post-title= post.title
         else
           p.empty 暂无文章
+      if entry.sections.length
+        .profile-sections
+          each section in entry.sections
+            section.profile-section(id=section.id aria-labelledby=section.id + '-title')
+              h2(id=section.id + '-title')= section.title
+              .profile-copy!= section.content
     footer.colophon
       a.wordmark(href='#top') Enervate.
       nav(aria-label='更多入口')

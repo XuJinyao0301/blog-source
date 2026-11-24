@@ -14,13 +14,20 @@ if (originalIndex) {
 
 hexo.extend.helper.register('enervate_home', function () {
   const link = path => this.url_for(path);
+  const sections = [
+    { id: 'research', path: 'projects/index.html', title: '研究方向' },
+    { id: 'about', path: 'about/index.html', title: '关于' }
+  ].flatMap(({ id, path, title }) => {
+    const page = this.site.pages.findOne({ path });
+    return page ? [{ id, title: page.title || title, content: page.content }] : [];
+  });
+
   return {
+    sections,
     root: link('/'),
     canonical: this.url,
     asset: link('/enervate/'),
     links: {
-      projects: link('/projects/'),
-      about: link('/about/'),
       archives: link('/archives/'),
       categories: link('/categories/'),
       tags: link('/tags/'),
