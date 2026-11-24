@@ -64,13 +64,19 @@ html(lang='zh-CN')
           each section in entry.sections
             section.profile-section(id=section.id aria-labelledby=section.id + '-title')
               h2(id=section.id + '-title')= section.title
-              .profile-copy!= section.content
+              .profile-copy
+                != section.content
+                if section.id === 'about'
+                  nav.profile-contact(aria-label='联系方式')
+                    a(href='mailto:xu_jinyao@outlook.com') xu_jinyao@outlook.com
+                    a(href='https://github.com/XuJinyao0301') GitHub
     footer.colophon
       a.wordmark(href='#top') Enervate.
       nav(aria-label='更多入口')
         a(href=entry.links.categories) 分类
         a(href=entry.links.tags) 标签
         a(href=entry.links.now) 近况
-        a(href=entry.links.feed) RSS
+        if entry.sections.some(section => section.id === 'about')
+          a(href='#about') 联系方式
     script(type='module' src=entry.asset + 'cloth.js')
     script(type='module' src=entry.asset + 'widgets.js')

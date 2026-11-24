@@ -31,8 +31,7 @@ hexo.extend.helper.register('enervate_home', function () {
       archives: link('/archives/'),
       categories: link('/categories/'),
       tags: link('/tags/'),
-      now: link('/now/'),
-      feed: link('/atom.xml')
+      now: link('/now/')
     },
     posts: this.site.posts.sort('date', -1).limit(18).map(post => ({
       title: post.title || '无标题',
